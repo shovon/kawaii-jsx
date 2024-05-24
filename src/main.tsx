@@ -1,41 +1,28 @@
 import "./style.css";
-import typescriptLogo from "./typescript.svg";
-import viteLogo from "/vite.svg";
-import { setupCounter } from "./counter.ts";
+import { useState } from "./lib/kawai.ts";
 
-function Sweet({ children }: { children?: unknown }) {
-	return <div>{children}</div>;
+function Counter() {
+	const [value, setState] = useState(0);
+	return (
+		<div>
+			<button
+				onClick={() => {
+					setState(value + 1);
+				}}
+			>
+				Increment
+			</button>{" "}
+			{`${value}`}
+		</div>
+	);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-	const result = (
-		<Sweet>
-			<Sweet>Sweet</Sweet>
-			<Sweet>Nice</Sweet>
-			<div>Nice</div>
-			<div>Cool</div>
-		</Sweet>
-	);
+// document.addEventListener("DOMContentLoaded", () => {
+// 	const result = (
 
-	console.log(result);
-});
+// 	);
 
-document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`;
+// 	console.log(result);
+// });
 
-setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+document.querySelector<HTMLDivElement>("#app")!.appendChild(<Counter />);

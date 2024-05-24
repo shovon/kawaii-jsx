@@ -623,7 +623,7 @@ function objectEntries<T extends object>(
 }
 
 export class KeyNotExistError extends ValidationError {
-	constructor(private key: any) {
+	constructor(key: any) {
 		super(
 			"Key does not exist in object",
 			`The supplied key ${key} does not exist in the supplied object`,

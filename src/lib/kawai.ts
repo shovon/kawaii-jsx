@@ -2,30 +2,29 @@ type Renderer = (props: unknown) => Element;
 
 let currentRendererAndParent: null | {
 	renderer: () => Element;
-	node: Element;
+	node?: Element;
 	// parent: Element;
 } = null;
 const stateMapping = new WeakMap<object, unknown>();
 
 export function useState<T>(initialValue: T): [T, (value: T) => void] {
 	if (currentRendererAndParent === null) {
-		throw new Error("useState called outside of a functional component");
+		return [initialValue, () => {}];
 	}
 
-	const obj = {};
-	stateMapping.set(obj, initialValue);
+	if (!stateMapping.has(currentRendererAndParent)) {
+		stateMapping.set(currentRendererAndParent, initialValue);
+	}
+	let currentValue = stateMapping.get(currentRendererAndParent);
 
 	return [
-		initialValue,
-		(
-			({ renderer, node }, reference) =>
-			(value: T) => {
-				stateMapping.set(reference, value);
+		currentValue as T,
+		((reference) => (value: T) => {
+			stateMapping.set(reference, value);
 
-				const newNode = renderer();
-				node.replaceWith(newNode);
-			}
-		)(currentRendererAndParent, obj),
+			const newNode = reference.renderer();
+			reference?.node?.replaceWith(newNode);
+		})(currentRendererAndParent),
 	];
 }
 
@@ -52,16 +51,28 @@ export function create(
 				const domNodeRetriever = () => {
 					return node(newProps);
 				};
-				const element = domNodeRetriever();
 				currentRendererAndParent = {
 					renderer: domNodeRetriever,
-					node: element,
+					// node: element,
 					// parent: element,
 				};
+				const element = domNodeRetriever();
+				currentRendererAndParent.node = element;
 				return element;
 			})({ ...(props ?? {}), children });
 		case "string":
 			const toReturn = document.createElement(node);
+
+			if (!!props) {
+				const p = props as { onClick?: unknown };
+				if (typeof p.onClick === "function") {
+					const onClick = p.onClick;
+					toReturn.addEventListener("click", () => {
+						onClick();
+					});
+				}
+			}
+
 			for (const child of children) {
 				switch (typeof child) {
 					case "string":
