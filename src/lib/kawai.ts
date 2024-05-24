@@ -24,6 +24,7 @@ export function useState<T>(initialValue: T): [T, (value: T) => void] {
 
 			const newNode = reference.renderer();
 			reference?.node?.replaceWith(newNode);
+			reference.node = newNode;
 		})(currentRendererAndParent),
 	];
 }
@@ -38,15 +39,6 @@ export function create(
 	}
 	switch (typeof node) {
 		case "function":
-			// We're dealing with a function, and the function will return a DOM
-			// node.
-			//
-			// But not too fast!
-			//
-			// The function also introduces side effects that could trigger a
-			// a re-render.
-			//
-			// This happens through a setState update.
 			return ((newProps) => {
 				const domNodeRetriever = () => {
 					return node(newProps);

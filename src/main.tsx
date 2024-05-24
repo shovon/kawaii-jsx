@@ -17,12 +17,4 @@ function Counter() {
 	);
 }
 
-// document.addEventListener("DOMContentLoaded", () => {
-// 	const result = (
-
-// 	);
-
-// 	console.log(result);
-// });
-
 document.querySelector<HTMLDivElement>("#app")!.appendChild(<Counter />);
