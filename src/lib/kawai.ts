@@ -23,6 +23,7 @@ export function useState<T>(initialValue: T): [T, (value: T) => void] {
 			stateMapping.set(reference, value);
 
 			const newNode = reference.renderer();
+			console.log(reference.node);
 			reference?.node?.replaceWith(newNode);
 			reference.node = newNode;
 		})(currentRendererAndParent),
